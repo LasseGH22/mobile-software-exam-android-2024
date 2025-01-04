@@ -1,11 +1,24 @@
 package com.example.examfriendlychatter
 
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.filter
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.printToLog
 import com.example.examfriendlychatter.data.Message
 import com.example.examfriendlychatter.presentation.composables.ChatMessage
+import com.example.examfriendlychatter.presentation.screens.ChatRoom
+import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 
@@ -15,97 +28,65 @@ class ChatMessagesTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun chatMessageDisplaysCorrectly() {
-        val message = Message(
-            from = "Alice",
-            message = "Hello, world!"
-        )
-
+    fun testLeftDividerIsDisplayed() {
         composeTestRule.setContent {
-            ChatMessage(message = message, isLeft = true)
+            ChatMessage(message = Message("Test Left", "Me"), isLeft = true)
         }
 
-        // Verify semantics for ChatMessage
-        composeTestRule.onNodeWithContentDescription("ChatMessage").assertIsDisplayed()
-
-        // Verify semantics for Profile Picture
-        composeTestRule.onNodeWithContentDescription("ProfilePicture").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("ChatProfilePicture").assertIsDisplayed()
-
-        // Verify text in the Message Field
-        composeTestRule.onNodeWithContentDescription("ChatMessageText").assertIsDisplayed()
-        composeTestRule.onNodeWithText(message.message).assertIsDisplayed()
-    }
-
-    @Test
-    fun rightAlignedChatMessageDisplaysCorrectly() {
-        val message = Message(
-            from = "Bob",
-            message = "Hi, Alice!"
-        )
-
-        composeTestRule.setContent {
-            ChatMessage(message = message, isLeft = false)
-        }
-
-        // Verify right alignment
-        composeTestRule.onNodeWithContentDescription("VeryImportantSpacer").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("VeryImportantDivider").assertIsDisplayed()
-    }
-
-    @Test
-    fun spacerAndDividerNotTested() {
-        val message = Message(
-            from = "Charlie",
-            message = "Spacer and divider should not break test!"
-        )
-
-        composeTestRule.setContent {
-            ChatMessage(message = message, isLeft = true)
-        }
-
-        // Ensure irrelevant spacers are ignored
-        composeTestRule.onNodeWithContentDescription("ImagineTestingASpacer").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Don'tWorryNoTestingHereLol").assertExists()
         composeTestRule.onNodeWithContentDescription("Don'tWorryNoTestingHereLol").assertIsDisplayed()
     }
 
     @Test
-    fun rightAlignedChatMessageExists() {
-        val message = Message(
-            from = "Bob",
-            message = "Hi, Alice!"
-        )
-
+    fun testRightDividerIsDisplayed() {
         composeTestRule.setContent {
-            ChatMessage(message = message, isLeft = false)
+            ChatMessage(message = Message("Test Right", "Me2"), isLeft = false)
         }
 
-        // Assert that the spacer exists
-        composeTestRule.onNodeWithContentDescription("VeryImportantSpacer", useUnmergedTree = true)
-            .assertExists("VeryImportantSpacer does not exist in the UI hierarchy")
-
-        // Assert that the divider exists
-        composeTestRule.onNodeWithContentDescription("VeryImportantDivider", useUnmergedTree = true)
-            .assertExists("VeryImportantDivider does not exist in the UI hierarchy")
+        composeTestRule.onNodeWithContentDescription("VeryImportantDivider").assertExists()
+        composeTestRule.onNodeWithContentDescription("VeryImportantDivider").assertIsDisplayed()
     }
 
     @Test
-    fun spacerAndDividerExist() {
-        val message = Message(
-            from = "Charlie",
-            message = "Spacer and divider should not break test!"
-        )
-
+    fun testLeftSpacerIsDisplayed() {
         composeTestRule.setContent {
-            ChatMessage(message = message, isLeft = true)
+            ChatMessage(message = Message("Test Left Spacer", "Me"), isLeft = true)
         }
 
-        // Assert that the irrelevant spacer exists
-        composeTestRule.onNodeWithContentDescription("ImagineTestingASpacer", useUnmergedTree = true)
-            .assertExists("ImagineTestingASpacer does not exist in the UI hierarchy")
+        composeTestRule.onNodeWithContentDescription("ImagineTestingASpacer").assertExists()
+    }
 
-        // Assert that the irrelevant divider exists
-        composeTestRule.onNodeWithContentDescription("Don'tWorryNoTestingHereLol", useUnmergedTree = true)
-            .assertExists("Don'tWorryNoTestingHereLol does not exist in the UI hierarchy")
+    @Test
+    fun testRightSpacerIsDisplayed() {
+        composeTestRule.setContent {
+            ChatMessage(message = Message("Test Right Spacer", "Me"), isLeft = false)
+        }
+
+        composeTestRule.onNodeWithContentDescription("VeryImportantSpacer").assertExists()
+    }
+
+    @Test
+    fun messageIsSentAndDisplaysCorrectly() {
+        composeTestRule.setContent {
+            ChatRoom()
+        }
+
+        val initialSpacerCount = composeTestRule.onAllNodesWithContentDescription("ImagineTestingASpacer").fetchSemanticsNodes().size
+        val initialDividerCount = composeTestRule.onAllNodesWithContentDescription("Don'tWorryNoTestingHereLol").fetchSemanticsNodes().size
+
+
+        val message = "Test Send and Display"
+        composeTestRule.onNodeWithContentDescription("MessageInput").performTextInput(message)
+        composeTestRule.onNodeWithContentDescription("SendButton").performClick()
+
+
+        composeTestRule.onNodeWithText(message).assertIsDisplayed()
+
+        composeTestRule.onAllNodesWithContentDescription("ImagineTestingASpacer")
+            .assertCountEquals(initialSpacerCount + 1)
+
+        composeTestRule.onAllNodesWithContentDescription("Don'tWorryNoTestingHereLol")
+            .assertCountEquals(initialDividerCount + 1)
+
     }
 }
