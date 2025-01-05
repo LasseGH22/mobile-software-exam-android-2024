@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -21,17 +22,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.examfriendlychatter.R
 import com.example.examfriendlychatter.data.Message
 
 @Composable
-fun ChatMessage(message: Message, isLeft: Boolean = true) {
+fun ChatMessage(message: Message, isLeft: Boolean = true, navController: NavController) {
     Row (
         modifier = Modifier
             .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(16.dp))
             .padding(16.dp)
-            .semantics { contentDescription = "ChatMessage" }
-        ,
+            .semantics { contentDescription = "ChatMessage" },
 
         horizontalArrangement = if (isLeft) {
             Arrangement.Start
@@ -41,7 +42,7 @@ fun ChatMessage(message: Message, isLeft: Boolean = true) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (isLeft) {
-            ProfilePicture(from = message.from)
+            ProfilePicture(from = message.from, navController)
             VerticalDivider(
                 modifier = Modifier
                     .width(2.dp)
@@ -63,14 +64,14 @@ fun ChatMessage(message: Message, isLeft: Boolean = true) {
                     .background(MaterialTheme.colorScheme.secondary)
                     .semantics { contentDescription = "VeryImportantDivider" }
             )
-            ProfilePicture(from = message.from)
+            ProfilePicture(from = message.from, navController)
         }
     }
 }
 
 
 @Composable
-fun ProfilePicture(from: String) {
+fun ProfilePicture(from: String, navController: NavController) {
     Column(
         modifier = Modifier
             .clip(shape = RoundedCornerShape(16.dp))
@@ -79,11 +80,13 @@ fun ProfilePicture(from: String) {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = "Profile Picture",
-            modifier = Modifier.width(50.dp).semantics { contentDescription = "ChatProfilePicture" }
-        )
+        Surface(onClick = { navController.navigate("homescreen") }) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = "Profile Picture",
+                modifier = Modifier.width(50.dp).semantics { contentDescription = "ChatProfilePicture" }
+            )
+        }
         Text(text = from,
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.semantics { contentDescription = "ChatProfileName" }

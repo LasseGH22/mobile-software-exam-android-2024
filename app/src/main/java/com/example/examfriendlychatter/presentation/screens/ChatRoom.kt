@@ -3,6 +3,7 @@ package com.example.examfriendlychatter.presentation.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,32 +33,35 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.example.examfriendlychatter.data.Message
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.examfriendlychatter.presentation.composables.ChatMessage
+import com.example.examfriendlychatter.viewmodels.ChatViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatRoom() {
+fun ChatRoom(navController: NavController, chatViewModel: ChatViewModel = viewModel()) {
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.tertiary)
             .semantics { contentDescription = "Scaffold" },
         topBar = {
-            TopAppBar(
-                title = { Text("ExamChatter: The exam friendly chatroom!") },
-                modifier = Modifier.semantics { contentDescription = "TopAppBar" }
-            )
+            Column {
+                TopAppBar(
+                    title = { Text("ExamChatter: The exam friendly chatroom!") },
+                    modifier = Modifier.semantics { contentDescription = "TopAppBar" }
+                )
+
+                Button(
+                    content = { Text(text = "Home") },
+                    onClick = { navController.navigate("HomeScreen") }
+                )
+            }
+
         }
     ) { innerPadding ->
-        var messageList by remember {
-            mutableStateOf(
-                listOf(
-                    Message("Hello", "Me"),
-                    Message("Hi", "Me2"),
-                )
-            )
-        }
+        val messageList = chatViewModel.messageList
         var currentUser by remember { mutableStateOf(getCurrentUser(messageList.size)) }
         Box(
             modifier = Modifier
@@ -83,7 +88,7 @@ fun ChatRoom() {
                             Arrangement.End
                         }
                     ) {
-                        ChatMessage(message = message, isLeft = isLeft)
+                        ChatMessage(message = message, isLeft = isLeft, navController)
                     }
                 }
             }
@@ -122,7 +127,7 @@ fun ChatRoom() {
                 )
                 Button(
                     onClick = {
-                        messageList += Message(currentMessage, currentUser)
+                        chatViewModel.addMessage(currentMessage, chatViewModel.getCurrentUser())
                         currentMessage = ""
                         currentUser = getCurrentUser(messageList.size)
                         focusManager.clearFocus()

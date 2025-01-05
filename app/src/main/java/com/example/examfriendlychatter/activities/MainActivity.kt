@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
             ExamFriendlyChatterTheme(
                 dynamicColor = false
             ) {
-                ChatRoom()
+                AppNavigation()
             }
         }
     }
