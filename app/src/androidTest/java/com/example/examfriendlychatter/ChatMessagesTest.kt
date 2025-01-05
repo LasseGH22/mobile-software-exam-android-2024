@@ -2,23 +2,15 @@ package com.example.examfriendlychatter
 
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.filter
-import androidx.compose.ui.test.hasAnyAncestor
-import androidx.compose.ui.test.hasContentDescription
-import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import androidx.compose.ui.test.printToLog
 import com.example.examfriendlychatter.data.Message
 import com.example.examfriendlychatter.presentation.composables.ChatMessage
 import com.example.examfriendlychatter.presentation.screens.ChatRoom
-import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 
@@ -87,6 +79,5 @@ class ChatMessagesTest {
 
         composeTestRule.onAllNodesWithContentDescription("Don'tWorryNoTestingHereLol")
             .assertCountEquals(initialDividerCount + 1)
-
     }
 }

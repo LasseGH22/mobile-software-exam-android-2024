@@ -63,5 +63,4 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     androidTestImplementation("androidx.benchmark:benchmark-macro-junit4:1.3.3")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0")
-
 }

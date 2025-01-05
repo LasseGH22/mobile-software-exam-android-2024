@@ -52,7 +52,7 @@ fun ChatMessage(message: Message, isLeft: Boolean = true) {
             )
             Spacer(modifier = Modifier.width(16.dp).semantics { contentDescription = "ImagineTestingASpacer" })
         }
-        MessageField(message = message.message)
+        MessageField(message = message)
         if (!isLeft) {
             Spacer(modifier = Modifier.width(16.dp).semantics { contentDescription = "VeryImportantSpacer" })
             VerticalDivider(
@@ -92,9 +92,13 @@ fun ProfilePicture(from: String) {
 }
 
 @Composable
-fun MessageField(message: String) {
-    Text(text = message,
-        style = MaterialTheme.typography.displayMedium,
-        modifier = Modifier.semantics { contentDescription = "ChatMessageText" }
-    )
+fun MessageField(message: Message) {
+    Column {
+        Text(text = message.message,
+            style = MaterialTheme.typography.displayMedium,
+            modifier = Modifier.semantics { contentDescription = "ChatMessageText" }
+        )
+        Text(text = message.timestamp)
+    }
+
 }
